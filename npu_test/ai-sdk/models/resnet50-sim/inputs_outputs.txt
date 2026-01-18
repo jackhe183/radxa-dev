@@ -1,0 +1,1 @@
+--inputs data --input-size-list '3,224,224' --outputs 'resnetv24_dense0_fwd'

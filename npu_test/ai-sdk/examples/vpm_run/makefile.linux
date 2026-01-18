@@ -1,0 +1,25 @@
+
+include makefile.linux.def
+
+SDK_DIR=/home/xxx/ai-sdk/viplite/
+INCLUDE += -I$(SDK_DIR)/include
+LIBS    += -L $(SDK_DIR)/arm64 -Wl,-rpath-link,$(SDK_DIR)/arm64
+OUT_DIR ?= $(PWD)/out
+
+CFLAGS += -g -O0 -DDEBUG -D_DEBUG
+CFLAGS += $(INCLUDE)
+
+
+ifeq ($(SAVE_OUTPUT_TXT_FILE),1)
+  CFLAGS += -DSAVE_OUTPUT_TXT_FILE
+endif
+
+target = $(OUT_DIR)/vpm_run
+$(target):
+	@mkdir -p $(OUT_DIR)
+	@$(CC) $(CFLAGS) -g -o $@ vpm_run.c $(LIBS) -l VIPlite -l VIPuser -lm
+	@cp sample.txt $(OUT_DIR)/
+
+.PHONY: clean
+clean:
+	@rm -rf $(OUT_DIR)

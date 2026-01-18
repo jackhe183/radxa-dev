@@ -1,0 +1,10 @@
+./input_image/6.jpg 6
+./input_image/1.jpg 1
+./input_image/2.jpg 2
+./input_image/5.jpg 5
+./input_image/3.jpg 3
+./input_image/4.jpg 4
+./input_image/8.jpg 8
+./input_image/7.jpg 7
+./input_image/0.jpg 0
+./input_image/9.jpg 9 

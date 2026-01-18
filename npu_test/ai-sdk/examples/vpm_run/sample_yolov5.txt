@@ -1,0 +1,4 @@
+[network]
+./yolov5.nb
+[input]
+./yolov5_dog.dat

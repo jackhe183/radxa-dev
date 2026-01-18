@@ -1,0 +1,4 @@
+[network]
+./lenet.nb
+[input]
+./lenet.dat

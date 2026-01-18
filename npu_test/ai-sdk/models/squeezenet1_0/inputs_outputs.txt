@@ -1,0 +1,1 @@
+--input-size-list 3,227,227

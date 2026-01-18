@@ -1,0 +1,1 @@
+--inputs images --input-size-list '3,640,640' --outputs '350 498 646'

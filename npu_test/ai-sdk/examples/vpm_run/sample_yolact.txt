@@ -1,0 +1,4 @@
+[network]
+./yolact.nb
+[input]
+./yolact_dog.dat

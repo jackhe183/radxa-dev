@@ -1,0 +1,6 @@
+images/COCO_train2014_000000000529.jpg
+images/COCO_train2014_000000001183.jpg
+images/COCO_train2014_000000002349.jpg
+images/COCO_train2014_000000003685.jpg
+images/COCO_train2014_000000004463.jpg
+images/dog.jpg

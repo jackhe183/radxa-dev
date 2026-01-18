@@ -1,0 +1,4 @@
+[network]
+./resnet50.nb
+[input]
+./resnet50_dog.dat
