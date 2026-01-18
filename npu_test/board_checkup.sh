@@ -85,7 +85,8 @@ EOF
     # NPU 检查
     if [ -e /dev/vipcore ]; then
         print_ok "NPU 设备: /dev/vipcore 存在"
-        npu_freq=$(cat /sys/class/devfreq/3600000.npu/cur_freq 2>/dev/null | awk '{print $1/1000000 " GHz"}')
+        npu_freq_raw=$(cat /sys/class/devfreq/3600000.npu/cur_freq 2>/dev/null)
+        npu_freq=$(awk "BEGIN {printf \"%.3f GHz\", $npu_freq_raw/1000000000}")
         print_info "NPU 频率: $npu_freq"
         lsmod | grep -q vipcore && print_ok "NPU 驱动: vipcore 已加载" || print_fail "NPU 驱动: 未加载"
     else
@@ -126,13 +127,13 @@ EOF
     cpu_temp=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null | awk '{print $1/1000}')
     npu_temp=$(cat /sys/class/thermal/thermal_zone5/temp 2>/dev/null | awk '{print $1/1000}')
 
-    if [ $(echo "$cpu_temp < 60" | bc) -eq 1 ]; then
+    if awk -v temp="$cpu_temp" 'BEGIN {exit !(temp < 60)}'; then
         print_ok "CPU 温度: ${cpu_temp}°C (正常)"
     else
         print_warn "CPU 温度: ${cpu_temp}°C (偏高)"
     fi
 
-    if [ $(echo "$npu_temp < 60" | bc) -eq 1 ]; then
+    if awk -v temp="$npu_temp" 'BEGIN {exit !(temp < 60)}'; then
         print_ok "NPU 温度: ${npu_temp}°C (正常)"
     else
         print_warn "NPU 温度: ${npu_temp}°C (偏高)"
@@ -148,7 +149,7 @@ EOF
                 print_info "风扇: 待机 (PWM=$pwm)"
             fi
             break
-        done
+        fi
     done
 
     print_title "5. 系统状态"
@@ -160,15 +161,16 @@ EOF
     # 系统负载
     load_avg=$(uptime | awk -F'load average:' '{print $2}')
     load_1min=$(echo $load_avg | awk '{print $1}')
-    if [ $(echo "$load_1min < 2.0" | bc) -eq 1 ]; then
+    # 使用 awk 进行浮点比较
+    if awk -v load="$load_1min" 'BEGIN {exit !(load < 2.0)}'; then
         print_ok "系统负载: $load_avg (正常)"
     else
         print_warn "系统负载: $load_avg (偏高)"
     fi
 
     # Swap 使用
-    swap_used=$(free | awk 'NR==3{print ($3/$2)*100}')
-    if [ $(echo "$swap_used < 10" | bc) -eq 1 ]; then
+    swap_used=$(free | awk 'NR==3{printf "%.0f", ($3/$2)*100}')
+    if awk -v swap="$swap_used" 'BEGIN {exit !(swap < 10)}'; then
         print_info "Swap 使用: ${swap_used}% (正常)"
     else
         print_warn "Swap 使用: ${swap_used}% (较高)"
@@ -247,7 +249,7 @@ performance_test() {
         echo "scale=20; 4*a(1)" | bc -l > /dev/null
     done
     end_time=$(date +%s.%N)
-    cpu_time=$(echo "$end_time - $start_time" | bc)
+    cpu_time=$(awk "BEGIN {printf \"%.2f\", $end_time - $start_time}")
     echo "CPU 计算耗时: ${cpu_time} 秒"
     echo ""
 
